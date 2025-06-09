@@ -1,4 +1,5 @@
 from scipy.fft import fft, fftfreq
+from scipy.signal import find_peaks
 import numpy as np
 
 def analyze_frequency(signal, sample_rate):
@@ -40,3 +41,21 @@ def calculate_speed(frequency, frequency_emitted, c=343):
     float: Speed of the object in m/s.
     """
     return c * (frequency - frequency_emitted) / frequency_emitted
+
+def analyze_multiple_frequencies(signal, sample_rate, num_peaks=3):
+    N = len(signal)
+    window = np.hanning(N)
+    yf = np.abs(fft(signal * window))[:N // 2]
+    xf = fftfreq(N, 1 / sample_rate)[:N // 2]
+    yf = yf[:N // 2]  # Solo la mitad positiva del espectro
+    # Detectar picos más suavemente
+    peaks, properties = find_peaks(yf, height=np.max(yf)*0.05, distance=5)
+
+    # Ordenar por altura (amplitud)
+    sorted_peaks = peaks[np.argsort(properties['peak_heights'])[::-1]]
+
+    results = []
+    for idx in sorted_peaks[:num_peaks]:
+        results.append((xf[idx], yf[idx]))
+
+    return results
