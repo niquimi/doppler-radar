@@ -28,7 +28,7 @@ def analyze_frequency(signal, sample_rate):
 
     return freq_interp, amp_interp
 
-def calculate_speed(frequency, frequency_emitted, c=343):
+def calculate_speed(frequency, f_emitted, c=343):
     """
     Calculate the speed of the object based on the Doppler shift.
 
@@ -40,7 +40,8 @@ def calculate_speed(frequency, frequency_emitted, c=343):
     Returns:
     float: Speed of the object in m/s.
     """
-    return c * (frequency - frequency_emitted) / frequency_emitted
+    delta_f = frequency - f_emitted
+    return (delta_f * c) / (f_emitted)
 
 def analyze_multiple_frequencies(signal, sample_rate, num_peaks=3):
     N = len(signal)
